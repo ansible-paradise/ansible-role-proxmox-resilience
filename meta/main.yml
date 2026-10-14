@@ -1,0 +1,22 @@
+---
+galaxy_info:
+  role_name: proxmox_resilience
+  author: ansible-paradise
+  company: "HeidelSec (https://heidelsec.de)"
+  description: Harden Proxmox VE hosts against hard freezes, memory exhaustion, and silent lockups via sysctl and kernel tuning.
+  license: MIT
+  min_ansible_version: "2.15"
+  platforms:
+    - name: Debian
+      versions:
+        - all
+  galaxy_tags:
+    - proxmox
+    - pve
+    - sysctl
+    - resilience
+    - hardening
+    - performance
+    - stability
+
+dependencies: []

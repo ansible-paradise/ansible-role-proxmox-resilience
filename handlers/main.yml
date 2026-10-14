@@ -1,0 +1,5 @@
+---
+- name: Apply sysctl configuration
+  ansible.posix.sysctl:
+    sysctl_file: "{{ proxmox_resilience_sysctl_file }}"
+    reload: true

@@ -1,0 +1,22 @@
+# {{ ansible_managed }}
+# Proxmox VE resilience and memory protection sysctl configuration
+# Managed by ansible-role-proxmox-resilience
+
+# Reserve memory for atomic kernel allocations and I/O buffer headroom
+vm.min_free_kbytes = {{ proxmox_resilience_vm_min_free_kbytes }}
+
+# Avoid excessive swapping while preserving cache
+vm.swappiness = {{ proxmox_resilience_vm_swappiness }}
+
+# Do not panic whole host on OOM; let OOM killer terminate rogue tasks
+vm.panic_on_oom = {{ proxmox_resilience_vm_panic_on_oom }}
+
+# Automatically reboot 10 seconds after a kernel panic instead of freezing indefinitely
+kernel.panic = {{ proxmox_resilience_kernel_panic }}
+
+# Trigger panic & reboot on unkillable hung tasks exceeding timeout threshold
+kernel.hung_task_panic = {{ proxmox_resilience_kernel_hung_task_panic }}
+kernel.hung_task_timeout_secs = {{ proxmox_resilience_kernel_hung_task_timeout_secs }}
+
+# Keep NMI watchdog active for detecting CPU core lockups
+kernel.nmi_watchdog = {{ proxmox_resilience_kernel_nmi_watchdog }}

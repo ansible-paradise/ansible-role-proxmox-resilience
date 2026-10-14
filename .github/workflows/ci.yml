@@ -1,0 +1,94 @@
+---
+name: CI
+
+"on":
+  pull_request:
+  push:
+    branches:
+      - main
+  schedule:
+    - cron: "0 9 * * 1"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  actions: write
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  PYTHON_VERSION: "3.12"
+
+jobs:
+  lint:
+    name: Lint
+    runs-on: self-hosted
+    timeout-minutes: 20
+    steps:
+      - name: Check out the codebase
+        uses: actions/checkout@v7
+
+      - name: Set up Python
+        uses: actions/setup-python@v7
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+
+      - name: Install lint dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install 'ansible-core>=2.19,<2.22' 'ansible-lint>=26' 'yamllint>=1.35'
+
+      - name: Cache collections
+        uses: actions/cache@v6
+        with:
+          path: ~/.ansible/collections
+          key: collections-${{ runner.os }}-${{ hashFiles('requirements.yml') }}
+          restore-keys: |
+            collections-${{ runner.os }}-
+
+      - name: Install collections
+        run: ansible-galaxy collection install -r requirements.yml
+
+      - name: Run yamllint
+        run: yamllint -s .
+
+      - name: Run ansible-lint
+        run: ansible-lint
+
+  syntax:
+    name: Syntax Check
+    runs-on: self-hosted
+    needs: lint
+    timeout-minutes: 20
+    steps:
+      - name: Check out the codebase
+        uses: actions/checkout@v7
+
+      - name: Set up Python
+        uses: actions/setup-python@v7
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+
+      - name: Install ansible-core
+        run: |
+          python -m pip install --upgrade pip
+          pip install 'ansible-core>=2.19,<2.22'
+
+      - name: Cache collections
+        uses: actions/cache@v6
+        with:
+          path: ~/.ansible/collections
+          key: collections-${{ runner.os }}-${{ hashFiles('requirements.yml') }}
+          restore-keys: |
+            collections-${{ runner.os }}-
+
+      - name: Install collections
+        run: ansible-galaxy collection install -r requirements.yml
+
+      - name: Run Ansible syntax check
+        run: ansible-playbook -i localhost, --syntax-check playbook.yml
+        env:
+          ANSIBLE_ROLES_PATH: ".."
+          ANSIBLE_FORCE_COLOR: "1"

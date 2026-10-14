@@ -1,0 +1,40 @@
+---
+- name: Validate role variables
+  ansible.builtin.include_tasks: validate.yml
+  tags:
+    - always
+
+- name: Deploy Proxmox resilience sysctl settings
+  when: proxmox_resilience_enabled | bool
+  block:
+    - name: Deploy sysctl resilience configuration file
+      ansible.builtin.template:
+        src: 99-homelab-resilience.conf.j2
+        dest: "{{ proxmox_resilience_sysctl_file }}"
+        owner: root
+        group: root
+        mode: "0644"
+      notify: Apply sysctl configuration
+
+    - name: Apply sysctl settings immediately
+      ansible.posix.sysctl:
+        name: "{{ item.name }}"
+        value: "{{ item.value }}"
+        state: present
+        sysctl_file: "{{ proxmox_resilience_sysctl_file }}"
+        reload: true
+      loop:
+        - name: vm.min_free_kbytes
+          value: "{{ proxmox_resilience_vm_min_free_kbytes }}"
+        - name: vm.swappiness
+          value: "{{ proxmox_resilience_vm_swappiness }}"
+        - name: vm.panic_on_oom
+          value: "{{ proxmox_resilience_vm_panic_on_oom }}"
+        - name: kernel.panic
+          value: "{{ proxmox_resilience_kernel_panic }}"
+        - name: kernel.hung_task_panic
+          value: "{{ proxmox_resilience_kernel_hung_task_panic }}"
+        - name: kernel.hung_task_timeout_secs
+          value: "{{ proxmox_resilience_kernel_hung_task_timeout_secs }}"
+        - name: kernel.nmi_watchdog
+          value: "{{ proxmox_resilience_kernel_nmi_watchdog }}"

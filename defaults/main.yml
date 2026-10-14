@@ -1,0 +1,30 @@
+---
+# Master toggle for the role
+proxmox_resilience_enabled: true
+
+# Destination sysctl configuration file
+proxmox_resilience_sysctl_file: /etc/sysctl.d/99-homelab-resilience.conf
+
+# Minimum free memory reserve for kernel buffers and atomic allocations (in KB).
+# 1048576 KB = 1 GB (prevents kernel deadlocks during sudden guest memory spikes).
+proxmox_resilience_vm_min_free_kbytes: 1048576
+
+# Seconds to wait before rebooting after a kernel panic (0 = disable/freeze indefinitely).
+proxmox_resilience_kernel_panic: 10
+
+# Trigger a kernel panic and subsequent reboot if an unkillable task hangs (> 120s).
+proxmox_resilience_kernel_hung_task_panic: 1
+
+# Timeout in seconds to consider a process hung (default 120s).
+proxmox_resilience_kernel_hung_task_timeout_secs: 120
+
+# Keep vm.panic_on_oom disabled (0) so the kernel OOM killer terminates over-consuming
+# processes/guests rather than crashing the hypervisor host.
+proxmox_resilience_vm_panic_on_oom: 0
+
+# Ensure hardware NMI watchdog stays active to detect hard CPU lockups.
+proxmox_resilience_kernel_nmi_watchdog: 1
+
+# Swappiness control: lower value (10) prioritizes keeping page cache in RAM,
+# avoiding aggressive swapping under transient load.
+proxmox_resilience_vm_swappiness: 10
