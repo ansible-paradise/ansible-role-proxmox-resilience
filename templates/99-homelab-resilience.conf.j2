@@ -20,3 +20,6 @@ kernel.hung_task_timeout_secs = {{ proxmox_resilience_kernel_hung_task_timeout_s
 
 # Keep NMI watchdog active for detecting CPU core lockups
 kernel.nmi_watchdog = {{ proxmox_resilience_kernel_nmi_watchdog }}
+
+# Do not artificially sleep/throttle vCPUs on split lock traps (crucial for MetaTrader VMs)
+kernel.split_lock_mitigate = {{ proxmox_resilience_kernel_split_lock_mitigate }}

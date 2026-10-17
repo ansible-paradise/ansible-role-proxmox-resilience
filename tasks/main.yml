@@ -38,3 +38,24 @@
           value: "{{ proxmox_resilience_kernel_hung_task_timeout_secs }}"
         - name: kernel.nmi_watchdog
           value: "{{ proxmox_resilience_kernel_nmi_watchdog }}"
+        - name: kernel.split_lock_mitigate
+          value: "{{ proxmox_resilience_kernel_split_lock_mitigate }}"
+
+    - name: Configure persistent zswap module parameters
+      when: proxmox_resilience_zswap_enabled | bool
+      ansible.builtin.copy:
+        dest: /etc/modprobe.d/zswap.conf
+        content: |
+          # Managed by ansible-role-proxmox-resilience
+          options zswap enabled=1 compressor={{ proxmox_resilience_zswap_compressor }} max_pool_percent={{ proxmox_resilience_zswap_max_pool_percent }}
+        owner: root
+        group: root
+        mode: "0644"
+
+    - name: Apply zswap runtime parameters
+      when: proxmox_resilience_zswap_enabled | bool
+      ansible.builtin.shell: |
+        echo {{ proxmox_resilience_zswap_compressor }} > /sys/module/zswap/parameters/compressor 2>/dev/null || true
+        echo {{ proxmox_resilience_zswap_max_pool_percent }} > /sys/module/zswap/parameters/max_pool_percent 2>/dev/null || true
+        echo 1 > /sys/module/zswap/parameters/enabled 2>/dev/null || true
+      changed_when: false

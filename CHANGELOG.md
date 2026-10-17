@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.1.0] - 2026-10-17
+
+### Added
+- Support for `kernel.split_lock_mitigate = 0` to prevent CPU throttling/penalties on low-latency trading VMs (MetaTrader).
+- Support for `zswap` in-kernel memory compression with `zstd` compressor to protect NVMe drives from raw swap I/O and reduce heat.
+
 ## [1.0.0] - 2026-10-14
 
 ### Added

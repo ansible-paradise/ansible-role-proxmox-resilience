@@ -17,5 +17,14 @@
       - proxmox_resilience_vm_panic_on_oom is number
       - proxmox_resilience_kernel_nmi_watchdog is number
       - proxmox_resilience_vm_swappiness is number
+      - proxmox_resilience_kernel_split_lock_mitigate is number
+      - proxmox_resilience_zswap_max_pool_percent is number
     fail_msg: "Numeric validation failed for proxmox_resilience variables"
+    quiet: true
+
+- name: Validate proxmox_resilience string variables
+  ansible.builtin.assert:
+    that:
+      - proxmox_resilience_zswap_compressor is string
+    fail_msg: "String validation failed for proxmox_resilience variables"
     quiet: true

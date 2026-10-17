@@ -26,6 +26,10 @@ Designed specifically for homelab hypervisors running mixed workloads (high-freq
 | `proxmox_resilience_kernel_hung_task_panic` | `1` | Forces panic and automated reboot on stuck tasks |
 | `proxmox_resilience_kernel_hung_task_timeout_secs` | `120` | Threshold in seconds before a stuck task triggers panic |
 | `proxmox_resilience_kernel_nmi_watchdog` | `1` | Ensures hardware NMI watchdog detects hard CPU core lockups |
+| `proxmox_resilience_kernel_split_lock_mitigate` | `0` | Disables artificial CPU sleep penalty on x86 split-lock traps (crucial for MetaTrader VMs) |
+| `proxmox_resilience_zswap_enabled` | `true` | Enables in-memory compressed swap buffer to protect NVMe drives and prevent I/O freezes |
+| `proxmox_resilience_zswap_compressor` | `zstd` | Compression algorithm for zswap pool (`zstd` gives best speed/ratio) |
+| `proxmox_resilience_zswap_max_pool_percent` | `20` | Max percentage of host RAM allocated to compressed zswap pool |
 
 ## Example Playbook
 
